@@ -1,0 +1,63 @@
+version: "3.8"
+services:
+  php:
+    hostname: snappfood_php
+    build: ./Docker/php
+    container_name: snappfood_php
+    volumes:
+      - ./Docker/php/fpm/php.ini:/usr/local/etc/php/php.ini
+      - ./web:/var/www:z
+    working_dir: /var/www
+    ports:
+      - 8000:80
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-file: "10"
+        max-size: "50m"
+    networks:
+      - snappfood-bridge
+  web:
+    hostname: snappfood_nginx
+    build: ./Docker/nginx
+    container_name: snappfood_nginx
+    ports:
+      - 8001:80
+    volumes:
+      - ./Docker/nginx/conf.d:/etc/nginx/conf.d
+      - ./web:/var/www:z
+    depends_on:
+      - php
+    restart: always
+    logging:
+      driver: "json-file"
+      options:
+        max-file: "10"
+        max-size: "50m"
+    networks:
+      - snappfood-bridge
+   mysql:
+    image: mysql:8.0
+    container_name: snappfood_mysql
+    ports:
+      - "3306:3306"
+    restart: unless-stopped
+    tty: true
+    volumes:
+      - "./Docker/mysql:/var/lib/mysql"
+    environment:
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_PASSWORD}
+    env_file:
+      - Docker/mysql/env_vars/.env
+    networks:
+      - snappfood-bridge
+
+networks:
+  adotel-bridge:
+    driver: bridge
+    driver_opts:
+      com.docker.network.bridge.name: snappfood-bridge

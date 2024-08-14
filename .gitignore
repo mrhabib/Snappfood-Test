@@ -1,0 +1,32 @@
+# Global
+.*.swp
+.DS_Store
+Docker/data
+
+# Application
+web/storage/breaker
+
+# PHPStorm
+.idea/*
+
+# Netbeans
+nbproject/
+/nbproject/
+/nbproject/private/
+/nbproject/private/private.properties
+
+# SSL Certs
+etc/ssl/
+
+web/.phpunit.cache
+web/node_modules
+web/public/build
+web/public/storage
+web/storage/*.key
+web/vendor
+web/.env
+web/.env.backup
+web/.env.production
+web/.phpunit.result.cache
+web/auth.json
+web/npm-debug.log
